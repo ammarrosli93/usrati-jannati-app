@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/playwrite-de-sas": "^5.2.7",
     "@tailwindcss/vite": "^4.1.17",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "sass": "^1.97.1",
     "tailwindcss": "^4.1.17"
   },
   "devDependencies": {

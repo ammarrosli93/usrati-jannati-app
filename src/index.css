@@ -1,1 +1,6 @@
+@import "@fontsource/playwrite-de-sas/index.css";
 @import "tailwindcss";
+
+@theme {
+  --font-playwrite: "Playwrite DE SAS", sans-serif;
+}
