@@ -43,18 +43,22 @@ const NormalLogin = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
-    const response = await fakeLoginApi(userName, password);
-
-    setLoading(false);
-
-    if (!response.success) {
-      setError(response.error || "Login Failed");
-      return;
+    try {
+      setLoading(true); //we use try finally here because if in real situation, when use API and when it error, it will jump straight to finally.
+      const response = await fakeLoginApi(userName, password);
+      if (!response.success) {
+        //this part handle expected failures which are invalid credentials and it will exit early to prevemt success logic running
+        setError(response.error || "Login Failed");
+        return;
+      }
+      alert("Login is succesfull!");
+    } catch (error) {
+      //handle if some error happens unexpected error
+      setError("Something went wrong. Please try again later.");
+    } finally {
+      setLoading(false); //this part is tell that setLoading(false) need to always run  to prevent button from staying disabled
     }
-
-    alert("Login is succesfull!");
   };
 
   return (
