@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 
 //handle response from login API call, differetiating between success and failed attemps
 type LoginResponse = {
@@ -32,6 +33,7 @@ const NormalLogin = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value); // e is a function parameter. When an input change event occurs, React passes an event object to e.React.ChangeEvent<HTMLInputElement> tells TypeScript what type of event object e will be, so we can safely access e.target.value
@@ -52,7 +54,8 @@ const NormalLogin = () => {
         setError(response.error || "Login Failed");
         return;
       }
-      alert("Login is succesfull!");
+      localStorage.setItem("isAuthenticated", "true");
+      navigate("/dashboard");
     } catch (error) {
       //handle if some error happens unexpected error
       setError("Something went wrong. Please try again later.");
@@ -62,24 +65,31 @@ const NormalLogin = () => {
   };
 
   return (
-    <div className="flex flex-row gap-2">
-      <form onSubmit={handleSubmit}>
-        {error && <p>{error}</p>}
+    <div className="flex justify-center gap-2">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col  gap-3 items-center"
+      >
         <input
           type="text"
           value={userName}
           onChange={handleUsernameChange}
           placeholder="Username/Email"
-          className="bg-emerald-300 border-none p-2 rounded-lg"
+          className="border-emerald-300 border w-sm max-h-10 text-sm p-5 rounded-full text-left hover:shadow-md hover:shadow-gray-300 hover:border-none"
         />
         <input
           type="password"
           value={password}
           onChange={handlePasswordChange}
           placeholder="Password"
-          className="bg-emerald-300 border-none p-2 rounded-lg"
+          className="border-emerald-300 border w-sm max-h-10 text-sm p-5 rounded-full text-left hover:shadow-md hover:shadow-gray-300 hover:border-none"
         />
-        <button type="submit" disabled={loading}>
+        {error && <p className=" text-rose-800 text-sm">{error}</p>}
+        <button
+          type="submit"
+          disabled={loading}
+          className=" text-white bg-emerald-900 border-none w-sm max-h-10 text-sm p-2 rounded-full text-center hover:shadow-md hover:shadow-gray-300"
+        >
           {loading ? "Logging in..." : "Submit"}
         </button>
       </form>

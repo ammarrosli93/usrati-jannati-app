@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "./index.css";
 
 type Gender = "male" | "female";
 type Generation = "grandparent" | "parent" | "self" | "sibling" | "child";
@@ -131,7 +130,7 @@ const getMemberColor = (relation: RelationConfig) => {
   return `color-mix(in srgb, ${base} ${brightness * 100}%, white)`;
 };
 
-function App() {
+const FamilyTree = () => {
   const [member, setMember] = useState<FamilyMember[]>([]);
   const [name, setName] = useState("");
   const [relation, setRelation] = useState<RelationConfig | null>(null);
@@ -243,5 +242,5 @@ function App() {
       </div>
     </div>
   );
-}
-export default App;
+};
+export default FamilyTree;
