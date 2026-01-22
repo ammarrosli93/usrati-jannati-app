@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { AuthUser } from "../types/AuthUser";
 import { AuthContext } from "./AuthContext";
 
 type Props = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export const AuthProvider = ({ children }: Props) => {

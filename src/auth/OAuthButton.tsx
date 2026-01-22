@@ -1,5 +1,4 @@
 import { FcGoogle } from "react-icons/fc";
-import { FaGithub } from "react-icons/fa";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useAuth } from "./useAuth";
 import type { AuthUser } from "../types/AuthUser";

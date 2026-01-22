@@ -186,7 +186,7 @@ const FamilyTree = () => {
           value={relation?.value ?? ""}
           onChange={(e) => {
             const selected = relationList.find(
-              (r) => r.value === e.target.value
+              (r) => r.value === e.target.value,
             );
             setRelation(selected ?? null);
           }}
@@ -237,7 +237,7 @@ const FamilyTree = () => {
                   </span>
                 ))}
               </div>
-            )
+            ),
         )}
       </div>
     </div>
