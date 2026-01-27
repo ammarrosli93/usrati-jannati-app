@@ -13,6 +13,7 @@
     "@fontsource/playwrite-de-sas": "^5.2.7",
     "@react-oauth/google": "^0.13.4",
     "@tailwindcss/vite": "^4.1.17",
+    "framer-motion": "^12.29.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-icons": "^5.5.0",
