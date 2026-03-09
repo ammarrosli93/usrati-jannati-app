@@ -1,7 +1,8 @@
 import { createPortal } from "react-dom";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 const portalRoot = document.getElementById("modal-root");
+
 type portalProps = {
   children: ReactNode;
 };
