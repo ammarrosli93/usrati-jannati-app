@@ -1,7 +1,10 @@
-import { div } from "framer-motion/client";
+import { useState } from "react";
+import { Modal } from "../../ui/modal/Modal";
+import { IoSearchOutline } from "react-icons/io5";
 
 type ZoneListProps = {
   onClick: (zone: string, area: string) => void;
+  onClose: () => void;
 };
 
 const states = [
@@ -186,9 +189,20 @@ const states = [
   },
 ];
 export const ZoneList = ({ onClick }: ZoneListProps) => {
-  const prayerZoneList = states.map((list) => (
-    <li key={list.state} className="flex flex-col font-poppins text-xs p-2">
-      <span className="font-bold">{list.state}</span>
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const filteredList = states
+    .map((list) => ({
+      ...list,
+      zones: list.zones.filter((zone) =>
+        zone.area.toLowerCase().includes(searchQuery.toLowerCase()),
+      ),
+    }))
+    .filter((list) => list.zones.length > 0);
+
+  const prayerZoneList = filteredList.map((list) => (
+    <li key={list.state} className="flex flex-col font-poppins text-xs">
+      <span className="font-semibold pt-2">{list.state}</span>
       <span className="font-light italic ">
         {list.zones.map((zone) => (
           <div key={zone.zone} className="flex flex-col">
@@ -197,7 +211,7 @@ export const ZoneList = ({ onClick }: ZoneListProps) => {
                 <span
                   key={`${zone.zone}-${index}`}
                   onClick={() => onClick(zone.zone, city)}
-                  className="cursor-pointer hover:bg-teal-600 hover:text-yellow-200 px-2 py-0.5 rounded-sm transition-colors flex flex-col"
+                  className="cursor-pointer hover:bg-teal-600 hover:text-yellow-200 px-1  rounded-sm transition-colors flex flex-col"
                 >
                   {city}
                 </span>
@@ -209,8 +223,19 @@ export const ZoneList = ({ onClick }: ZoneListProps) => {
     </li>
   ));
   return (
-    <div className="w-auto h-20 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] rounded-lg ">
-      <ul>{prayerZoneList}</ul>
-    </div>
+    <Modal>
+      <div className="w-auto h-60 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ">
+        <div className="flex flex-row w-full border border-teal-700  font-poppins text-xs font-light italic items-center p-1 px-2 rounded-full focus:visible">
+          <IoSearchOutline size={20} />
+          <input
+            type="text"
+            className=" p-1 px-2 text-gray-900 focus:outline-none"
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
+        <ul>{prayerZoneList}</ul>
+      </div>
+    </Modal>
   );
 };

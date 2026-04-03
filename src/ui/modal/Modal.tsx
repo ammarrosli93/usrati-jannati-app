@@ -28,7 +28,7 @@ export const Modal = ({ children }: ModalProps) => {
               scale: 0.94,
               transition: { duration: 0.2, ease: easeIn },
             }}
-            className="p-8 w-lg bg-white/70 border-white/10 rounded-xl shadow-md shadow-black/5"
+            className="p-8 w-auto bg-white/70 border-white/10 rounded-xl shadow-md shadow-black/5"
           >
             {children}
           </motion.div>
