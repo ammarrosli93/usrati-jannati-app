@@ -2,9 +2,13 @@ import { useState } from "react";
 import { EmptyState } from "./components/EmptyState";
 import { AddMemberModal } from "./components/AddMemberModal";
 import { TreeCanvas } from "./components/TreeCanvas";
-import type { MemberData, MemberFormData } from "../types/familyTree.type";
+import type {
+  MemberData,
+  MemberFormData,
+  RelationType,
+} from "../types/familyTree.type";
 
-const getPlaceholder = (gender: "male" | "female") => {
+const getPlaceholder = (gender: "male" | "female" | undefined) => {
   if (gender === "male") return "/avatars/male.png";
   else return "/avatars/female.png";
 };
@@ -14,85 +18,85 @@ const FamilyTreePage = () => {
   const [members, setMembers] = useState<MemberData[]>([]);
   const [selectedMember, setSelectedMember] = useState<MemberData | null>(null);
   const [clickMember, setClickMember] = useState<MemberData | null>(null);
+  const [relation, setRelation] = useState<RelationType | undefined>(undefined);
 
-  const handleOpen = (member?: MemberData) => {
+  console.log(members);
+  const handleOpen = (member: MemberData, relation: RelationType) => {
     if (member) {
       setClickMember(member);
     }
+    setRelation(relation);
     setAddMemberModalOpen(true);
   };
+
   const handleClose = () => {
     setClickMember(null);
     setAddMemberModalOpen(false);
     setSelectedMember(null);
+    setRelation(undefined);
   };
 
   const handleFormSubmit = (formData: MemberFormData) => {
-    console.log(clickMember?.id, "Jadilagi");
-    console.log(formData.relation, "relation");
     if (selectedMember === null) {
+      // Add new member from empty state or add new member with relation
       const newMemberId = crypto.randomUUID();
       const targetId = clickMember?.id;
-      console.log(targetId, "menjadi");
+      // Construct new member data based on relation type
       const member: MemberData = {
         id: newMemberId,
         ...formData,
         avatar: formData.avatar || getPlaceholder(formData.gender),
-        parentId: formData.relation === "child" && targetId ? [targetId] : [],
-        spouseId: formData.relation === "spouse" && targetId ? [targetId] : [],
-        childrenId:
-          formData.relation === "spouse" && clickMember
-            ? [...clickMember.childrenId]
-            : formData.relation === "parent" && targetId
-              ? [targetId]
-              : [],
-        siblingId:
-          formData.relation === "sibling" && targetId ? [targetId] : [],
+        parentIds: [],
+        spouseIds: [],
+        childrenIds: [],
+        siblingIds: [],
       };
+
+      if (relation === "parent" && targetId) {
+        member.childrenIds = [targetId];
+      }
+      if (relation === "child" && targetId) {
+        member.parentIds = [targetId];
+      }
+      if (relation === "spouse" && targetId) {
+        member.spouseIds = [targetId];
+      }
+      if (relation === "sibling" && targetId) {
+        member.siblingIds = [targetId];
+      }
+
       setMembers((prev) => {
         const updatedPrev = prev.map((m) => {
           if (m.id === targetId) {
             return {
               ...m,
-              parentId:
-                formData.relation === "parent"
-                  ? [...m.parentId, newMemberId]
-                  : m.parentId,
-              childrenId:
-                formData.relation === "child"
-                  ? [...m.childrenId, newMemberId]
-                  : m.childrenId,
-              spouseId:
-                formData.relation === "spouse"
-                  ? [...m.spouseId, newMemberId]
-                  : m.spouseId,
-              siblingId:
-                formData.relation === "sibling"
-                  ? [...m.siblingId, newMemberId]
-                  : m.siblingId,
+
+              parentIds:
+                relation === "child"
+                  ? [...m.parentIds, newMemberId]
+                  : m.parentIds,
+              childrenIds:
+                relation === "parent"
+                  ? [...m.childrenIds, newMemberId]
+                  : m.childrenIds,
+              spouseIds:
+                relation === "spouse"
+                  ? [...m.spouseIds, newMemberId]
+                  : m.spouseIds,
+              siblingIds:
+                relation === "sibling"
+                  ? [...m.siblingIds, newMemberId]
+                  : m.siblingIds,
             };
-          }
-          if (
-            formData.relation === "spouse" &&
-            targetId &&
-            m.parentId.includes(targetId)
-          ) {
-            return { ...m, parentId: [...m.parentId, newMemberId] };
-          }
-          if (
-            formData.relation === "child" &&
-            targetId &&
-            m.spouseId.includes(targetId)
-          ) {
-            return { ...m, childrenId: [...m.childrenId, newMemberId] };
           }
           return m;
         });
         const finalList = [...updatedPrev, member];
-        console.log(finalList);
+
         return finalList;
       });
     } else {
+      // Edit existing member
       setMembers((prev) => {
         return prev.map((m) =>
           m.id === selectedMember.id

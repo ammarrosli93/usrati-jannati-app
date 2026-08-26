@@ -2,17 +2,18 @@ export type RelationType = "parent" | "child" | "spouse" | "sibling";
 
 export type MemberFormData = {
   name: string;
-  relation?: RelationType;
   date: string;
-  gender: "male" | "female";
-  status: "active" | "inactive";
+  gender: "male" | "female" | undefined;
+  status: "active" | "inactive" | undefined;
   avatar: string;
+  location: string;
+  relation?: RelationType;
 };
 
 export type MemberData = MemberFormData & {
   id: string;
-  parentId: string[];
-  spouseId: string[];
-  childrenId: string[];
-  siblingId: string[];
+  parentIds: string[];
+  spouseIds: string[];
+  childrenIds: string[];
+  siblingIds: string[];
 };

@@ -1,8 +1,9 @@
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { Modal } from "../../ui/modal/Modal";
-import type { FormEvent } from "react";
 import React, { useEffect, useState } from "react";
 import type { MemberData, MemberFormData } from "../../types/familyTree.type";
+
+import { FaCloudArrowUp } from "react-icons/fa6";
 
 type AddMemberProps = {
   onClose: () => void;
@@ -13,11 +14,11 @@ type AddMemberProps = {
 
 const currentFormMember = (member?: MemberData | null): MemberFormData => ({
   name: member?.name ?? "",
-  relation: member?.relation ?? "",
   date: member?.date ?? "",
-  gender: member?.gender ?? "",
-  status: member?.status ?? "",
+  gender: member?.gender ?? "male",
+  status: member?.status ?? "active",
   avatar: member?.avatar ?? "",
+  location: member?.location ?? "",
 });
 
 export const AddMemberModal = ({
@@ -26,12 +27,12 @@ export const AddMemberModal = ({
   defaultValue,
   firstMember,
 }: AddMemberProps) => {
-  const [currentMember, setcurrentMember] = useState<MemberFormData>(
+  const [currentMember, setCurrentMember] = useState<MemberFormData>(
     currentFormMember(defaultValue),
   );
 
   useEffect(() => {
-    setcurrentMember(currentFormMember(defaultValue));
+    setCurrentMember(currentFormMember(defaultValue));
   }, [defaultValue]);
 
   const handleConvertUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +42,7 @@ export const AddMemberModal = ({
 
     const updateUrl = URL.createObjectURL(file);
 
-    setcurrentMember((prev) => ({ ...prev, avatar: updateUrl }));
+    setCurrentMember((prev) => ({ ...prev, avatar: updateUrl }));
   };
 
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -53,15 +54,14 @@ export const AddMemberModal = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.currentTarget;
-    setcurrentMember((prev) => ({ ...prev, [name]: value }));
+    setCurrentMember((prev) => ({ ...prev, [name]: value }));
   };
 
-  console.log("currentMember", currentMember);
   return (
     <Modal>
-      <div className="flex flex-col gap-5 font-poppins subpixel-antialiased">
-        <div className=" flex flex-row flex-wrap justify-between">
-          <p className="text-base font-semibold text-teal-700">
+      <div className="flex flex-col flex-wrap gap-5 font-plusjakartasans subpixel-antialiased text-sm w-sm">
+        <div className=" flex flex-row justify-between">
+          <p className=" text-base font-bold text-teal-700">
             Insert Family Details
           </p>
           <button type="button" title="Back Button" onClick={onClose}>
@@ -71,146 +71,112 @@ export const AddMemberModal = ({
 
         <form
           onSubmit={handleOnSubmit}
-          className="flex flex-wrap flex-col w-full justify-between gap-3 font-base text-xs font-poppins subpixel-antialiased"
+          className="flex flex-col w-full justify-between gap-3 text-sm subpixel-antialiased "
         >
-          <div className="flex flex-wrap flex-col gap-1">
-            <label htmlFor="name" className="font-base">
+          <div className="flex flex-wrap flex-col gap-1 w-full">
+            <label htmlFor="name" className="font-medium text-teal-800">
               Name
             </label>
             <input
-              name="name"
-              required
               id="name"
+              name="name"
               type="text"
               placeholder="Enter full name"
-              className="h-8 py-3 px-3 rounded-xl bg-black/10 align-middle"
+              className="h-8 py-3 px-3 rounded-lg bg-black/10 align-middle"
               value={currentMember.name}
               onChange={handleChange}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4 items-center justify-between">
-            <div className="flex flex-wrap flex-col gap-1">
-              <label htmlFor="relation">Relation</label>
-              <select
-                name="relation"
-                required
-                id="relation"
-                title="relations list"
-                className="h-8 px-2 rounded-xl bg-black/10 align-middle"
-                value={currentMember.relation}
-                onChange={handleChange}
-                disabled={firstMember}
-              >
-                <option value="parent" className="content-center">
-                  Parent
-                </option>
-                <option value="sibling" className="content-center">
-                  Sibling
-                </option>
-                <option value="child" className="content-center">
-                  Child
-                </option>
-                <option value="spouse" className="content-center">
-                  Spouse
-                </option>
-              </select>
-            </div>
-            <div className="flex flex-wrap flex-col gap-1">
-              <label htmlFor="gender">Gender</label>
-              <div
-                id="gender"
-                className="flex flex-wrap flex-row justify-start gap-5"
-              >
-                <div className=" w-fit flex flex-row gap-2 align-middle">
-                  <span>Male</span>
-                  <input
-                    type="radio"
-                    name="gender"
-                    checked={currentMember.gender === "male"}
-                    placeholder="Paternal"
-                    value={"male"}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="flex flex-row gap-2 center">
-                  <span>Female</span>
-                  <input
-                    type="radio"
-                    name="gender"
-                    id=""
-                    placeholder="maternal"
-                    value={"female"}
-                    checked={currentMember.gender === "female"}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4 items-center justify-between">
-            <div className="flex flex-wrap flex-col gap-1">
-              <p>Status</p>
-              <div className="flex flex-wrap flex-row justify-start gap-5">
-                <div className=" w-fit flex flex-row gap-2 align-middle">
-                  <span>Active</span>
-                  <input
-                    type="radio"
-                    name="status"
-                    checked={currentMember.status === "active"}
-                    placeholder="Active"
-                    value={"active"}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="flex flex-row gap-2 center">
-                  <span>Inactive</span>
-                  <input
-                    type="radio"
-                    name="status"
-                    id=""
-                    placeholder="Inactive"
-                    value={"inactive"}
-                    checked={currentMember.status === "inactive"}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap flex-col gap-1">
-              <label htmlFor="dob">Date of Birth </label>
-              <input
-                id="dob"
-                type="date"
-                title="date of birth"
-                placeholder="Enter full name"
-                className="h-8 py-3 px-3 rounded-xl bg-black/10 align-middle"
-                name="date"
-                value={currentMember.date}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-          <div className="flex flex-wrap flex-col gap-1 w-fit">
-            <label htmlFor="avatar">Avatar</label>
+          <div className="flex flex-wrap flex-col gap-1 w-full">
+            <label htmlFor="location" className="font-medium text-teal-800">
+              Origin
+            </label>
             <input
-              className="h-8 py-2 px-3 rounded-xl bg-black/10 align-middle w-"
-              type="file"
-              name="avatar"
-              id="avatar"
-              onChange={handleConvertUrl}
+              required
+              id="location"
+              name="location"
+              type="text"
+              placeholder="Enter place of origin"
+              className="h-8 py-3 px-3 rounded-lg bg-black/10 align-middle"
+              value={currentMember.location}
+              onChange={handleChange}
             />
           </div>
 
-          <div className="flex flex-row flex-wrap items-center justify-center gap-3 mt-5">
+          <div className="grid grid-cols-2 gap-3 items-center w-full">
+            <div className="col-span-1 flex  flex-col flex-wrap gap-1 w-full">
+              <label htmlFor="gender" className="font-medium text-teal-800">
+                Gender
+              </label>
+              <select
+                className="h-8 px-3 rounded-lg bg-black/10 align-middle"
+                name="gender"
+                value={currentMember.gender}
+                onChange={handleChange}
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+            <div className="col-span-1 flex flex-col flex-wrap gap-1 w-full">
+              <label htmlFor="gender" className="font-medium text-teal-800">
+                Status
+              </label>
+              <select
+                className="h-8 px-3 rounded-lg bg-black/10 align-middle"
+                name="status"
+                value={currentMember.status}
+                onChange={handleChange}
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex flex-wrap flex-col gap-1 w-full">
+            <label htmlFor="dob" className="font-medium text-teal-800">
+              Date of Birth{" "}
+            </label>
+            <input
+              id="dob"
+              type="date"
+              title="date of birth"
+              placeholder="Enter full name"
+              className="h-8 py-3 px-3 rounded-lg bg-black/10 align-middle"
+              name="date"
+              value={currentMember.date}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-wrap flex-col gap-1">
+            <p className="font-medium text-teal-800">Avatar</p>
+            <label
+              htmlFor="avatar"
+              className="h-8 py-1.5 px-3 rounded-lg bg-black/10 items-center"
+            >
+              <div className="flex flex-row gap-2 items-center opacity-40">
+                <FaCloudArrowUp />
+
+                <p>Upload photo</p>
+              </div>
+              <input
+                style={{ display: "none" }}
+                type="file"
+                name="avatar"
+                id="avatar"
+                onChange={handleConvertUrl}
+              />
+            </label>
+          </div>
+          <div className="grid grid-cols-2 items-center justify-center gap-2 mt-5">
             <button
               type="submit"
-              className=" rounded-full w-m  px-4 py-2 mb-2 border text-yellow-300 hover:border-white/20 bg-teal-900 border-teal-700 hover:scale-105 "
+              className="col-span-1 rounded-lg w-m  px-4 py-2 mb-2 border text-yellow-300 hover:border-white/20 bg-teal-900 border-teal-700 hover:scale-105 "
             >
               {defaultValue ? "Update" : "Add"}
             </button>
             <button
-              className="rounded-full w-m  px-4 py-2 mb-2 border border-teal-700 text-teal-900 hover:bg-yellow-300 hover:text-teal-800 hover:shadow-md hover:border-white/20"
+              className="col-span-1 rounded-lg w-m  px-4 py-2 mb-2 border border-teal-700 text-teal-900 hover:bg-yellow-300 hover:text-teal-800 hover:shadow-md hover:border-white/20"
               onClick={onClose}
               type="button"
             >

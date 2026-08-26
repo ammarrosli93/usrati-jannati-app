@@ -1,10 +1,11 @@
-import type { MemberData } from "../../types/familyTree.type";
+import type { MemberData, RelationType } from "../../types/familyTree.type";
 import { MemberNode } from "./MemberNode";
 
 type TreeNodeProps = {
   memberId: string;
-  member: Record<string, MemberData>;
-  onAdd: (member: MemberData) => void;
+  members: MemberData[];
+  member: MemberData;
+  onAdd: (member: MemberData, relation: RelationType) => void;
   onEdit: (member: MemberData) => void;
   onRemove: (id: string) => void;
 };
@@ -14,11 +15,10 @@ export const TreeNode = ({
   onEdit,
   onRemove,
   member,
+  members,
   memberId,
 }: TreeNodeProps) => {
-  const currentMember = member[memberId];
-  const spouseData = member[currentMember.spouseId?.[0]];
-  if (!currentMember) return null;
+  const firstMember = member;
 
   return (
     <div className="flex flex-col items-center min-w-max">
@@ -40,7 +40,7 @@ export const TreeNode = ({
       </div>
 
       <div className=" flex flex-row items-start justify-center gap-2 mt-2 ">
-        {currentMember.childrenId?.map((childId) => (
+        {currentMember.childrenIds?.map((childId) => (
           <TreeNode
             key={childId}
             memberId={childId}

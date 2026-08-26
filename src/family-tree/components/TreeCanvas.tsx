@@ -1,9 +1,9 @@
-import type { MemberData } from "../../types/familyTree.type";
+import type { MemberData, RelationType } from "../../types/familyTree.type";
 import { TreeNode } from "./TreeNode";
 
 type MemberProps = {
   members: MemberData[];
-  onAddMember: (member: MemberData) => void;
+  onAddMember: (member: MemberData, relation: RelationType) => void;
   onEditMember: (member: MemberData) => void;
   onRemoveMember: (id: string) => void;
 };
@@ -14,36 +14,24 @@ export const TreeCanvas = ({
   onEditMember,
   onRemoveMember,
 }: MemberProps) => {
-  const member = members.reduce((acc, m) => {
-    acc[m.id] = m;
-    return acc;
-  }, {}) as Record<string, MemberData>;
-
-  const potentialRoots = members.filter((m) => m.parentId.length === 0);
-  const root = potentialRoots.filter((m) => {
-    if (m.spouseId && m.spouseId.length > 0) {
-      const spouseId = m.spouseId[0];
-      const isSpouseRoot = potentialRoots.some((r) => r.id === spouseId);
-      if (isSpouseRoot && m.gender === "female") {
-        return false;
-      }
-    }
-    return true;
-  });
+  const root = members[0];
+  
+  if (!root) {
+    return null;
+  }
 
   return (
     <div className="w-full min-w-max h-full ">
       <div className="justify-center items-start gap-2 flex flex-row">
-        {root.map((r) => (
-          <TreeNode
-            key={r.id}
-            memberId={r.id}
-            member={member}
-            onAdd={onAddMember}
-            onEdit={onEditMember}
-            onRemove={onRemoveMember}
-          />
-        ))}
+        <TreeNode
+          key={root.id}
+          memberId={root.id}
+          member={root}
+          members={members}
+          onAdd={onAddMember}
+          onEdit={onEditMember}
+          onRemove={onRemoveMember}
+        />
       </div>
     </div>
   );
